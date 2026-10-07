@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - Community Knowledge Vault{% endblock %}
+
+{% block content %}
+  <!-- Page Banner -->
+  <section class="page-banner">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="{{ url_for('index') }}">Home</a>
+        <span>/</span>
+        <span style="color: var(--accent-lime);">About</span>
+      </div>
+      <span class="section-tag">PROJECT OVERVIEW</span>
+      <h1 class="page-banner-title">Our Community Knowledge is Our Identity.</h1>
+      <p class="page-banner-subtitle">
+        Community Knowledge Vault (CKV) is an open community platform built to document, protect, and share local wisdom, skills, and traditions across Amravati.
+      </p>
+    </div>
+  </section>
+
+  <!-- Story & Vision -->
+  <main class="section-py" style="background-color: var(--bg-dark);">
+    <div class="container container-narrow">
+      <article class="article-prose">
+        <h2>How the Project Started</h2>
+      
+        <p>
+          We selected this project because useful local knowledge is often shared through personal experience and conversations but is not always recorded in one place. CKV provides a website where this information can be shared, organized and explored.
+        </p>
+
+        <h2 style="margin-top: 2.5rem;">What CKV Provides</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+            <div style="color: var(--accent-lime); font-family: var(--font-serif-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">01</div>
+            <h4 style="color: #ffffff; font-size: 1.1rem; margin-bottom: 0.5rem;">Share Useful Knowledge</h4>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+              Community members can submit step-by-step guides, farming tips, recipes, and local history.
+            </p>
+          </div>
+
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+            <div style="color: var(--accent-lime); font-family: var(--font-serif-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">02</div>
+            <h4 style="color: #ffffff; font-size: 1.1rem; margin-bottom: 0.5rem;">Explore Community Knowledge</h4>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+              Search and filter knowledge entries by category, skill level, and keywords.
+            </p>
+          </div>
+
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+            <div style="color: var(--accent-lime); font-family: var(--font-serif-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">03</div>
+            <h4 style="color: #ffffff; font-size: 1.1rem; margin-bottom: 0.5rem;">Ask Questions</h4>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+              Registered users can ask questions on knowledge posts and receive answers from contributors.
+            </p>
+          </div>
+
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+            <div style="color: var(--accent-lime); font-family: var(--font-serif-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">04</div>
+            <h4 style="color: #ffffff; font-size: 1.1rem; margin-bottom: 0.5rem;">Send Learning Requests</h4>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+              Request 1-on-1 guidance from contributors to learn skills directly.
+            </p>
+          </div>
+
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); grid-column: 1 / -1;">
+            <div style="color: var(--accent-lime); font-family: var(--font-serif-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">05</div>
+            <h4 style="color: #ffffff; font-size: 1.1rem; margin-bottom: 0.5rem;">Admin Approval & Verification</h4>
+            <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">
+              Administrators review submissions to approve posts and mark verified content.
+            </p>
+          </div>
+        </div>
+
+        <h2 style="margin-top: 3.5rem;">Our Guide</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+            <img src="https://ui-avatars.com/api/?name=Dr+R+R+Bhure&background=141c16&color=d8f844&bold=true&size=160" alt="Dr R. R. Bhure" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.75rem; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+            <h4 style="color: #ffffff; font-size: 1rem; margin-bottom: 0.2rem;">Dr R. R. Bhure</h4>
+            <span style="font-size: 0.78rem; color: var(--accent-lime);">Project Mentor & Guide</span>
+          </div>
+        </div>
+
+        <h2 style="margin-top: 3.5rem;">Project Team</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+            <img src="https://ui-avatars.com/api/?name=Team+Member+1&background=141c16&color=d8f844&bold=true&size=160" alt="Team Member 1" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.75rem; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+            <h4 style="color: #ffffff; font-size: 1rem; margin-bottom: 0.2rem;">Yash Nistane</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);"> Developer</span>
+          </div>
+
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+            <img src="https://ui-avatars.com/api/?name=Team+Member+2&background=141c16&color=d8f844&bold=true&size=160" alt="Team Member 2" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.75rem; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+            <h4 style="color: #ffffff; font-size: 1rem; margin-bottom: 0.2rem;">Prajwal Sawalkar</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);"> Member</span>
+          </div>
+
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+            <img src="https://ui-avatars.com/api/?name=Team+Member+3&background=141c16&color=d8f844&bold=true&size=160" alt="Team Member 3" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.75rem; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+            <h4 style="color: #ffffff; font-size: 1rem; margin-bottom: 0.2rem;">Vedant Kohale</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Member</span>
+          </div>
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+            <img src="https://ui-avatars.com/api/?name=Team+Member+3&background=141c16&color=d8f844&bold=true&size=160" alt="Team Member 3" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.75rem; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+            <h4 style="color: #ffffff; font-size: 1rem; margin-bottom: 0.2rem;">Virag Deshmukh</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Member</span>
+          </div>
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+            <img src="https://ui-avatars.com/api/?name=Team+Member+3&background=141c16&color=d8f844&bold=true&size=160" alt="Team Member 3" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.75rem; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+            <h4 style="color: #ffffff; font-size: 1rem; margin-bottom: 0.2rem;">Yash Deshmukh</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Member</span>
+          </div>
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+            <img src="https://ui-avatars.com/api/?name=Team+Member+3&background=141c16&color=d8f844&bold=true&size=160" alt="Team Member 3" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.75rem; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+            <h4 style="color: #ffffff; font-size: 1rem; margin-bottom: 0.2rem;">Jay Vidhate</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Member</span>
+          </div>
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+            <img src="https://ui-avatars.com/api/?name=Team+Member+3&background=141c16&color=d8f844&bold=true&size=160" alt="Team Member 3" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.75rem; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+            <h4 style="color: #ffffff; font-size: 1rem; margin-bottom: 0.2rem;">Ayan khan</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Member</span>
+          </div>
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+            <img src="https://ui-avatars.com/api/?name=Team+Member+3&background=141c16&color=d8f844&bold=true&size=160" alt="Team Member 3" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.75rem; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+            <h4 style="color: #ffffff; font-size: 1rem; margin-bottom: 0.2rem;">Ayush Dhage</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Member</span>
+          </div>
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+            <img src="https://ui-avatars.com/api/?name=Team+Member+3&background=141c16&color=d8f844&bold=true&size=160" alt="Team Member 3" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.75rem; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+            <h4 style="color: #ffffff; font-size: 1rem; margin-bottom: 0.2rem;">Om Mandulkar</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Member</span>
+          </div>
+          <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+            <img src="https://ui-avatars.com/api/?name=Team+Member+3&background=141c16&color=d8f844&bold=true&size=160" alt="Team Member 3" style="width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 0.75rem; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+            <h4 style="color: #ffffff; font-size: 1rem; margin-bottom: 0.2rem;">Zaid Ahmad</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Member</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+{% endblock %}

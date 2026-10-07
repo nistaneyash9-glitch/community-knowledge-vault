@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Moderation Dashboard - Community Knowledge Vault{% endblock %}
+
+{% block content %}
+  <!-- Page Banner -->
+  <section class="page-banner">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="{{ url_for('index') }}">Home</a>
+        <span>/</span>
+        <span style="color: var(--accent-lime);">Admin Console</span>
+      </div>
+      <span class="section-tag">ADMIN MODERATION</span>
+      <h1 class="page-banner-title">Community Knowledge Verification</h1>
+      <p class="page-banner-subtitle">
+        Review submitted knowledge posts, verify content accuracy, and maintain community quality standards.
+      </p>
+    </div>
+  </section>
+
+  <!-- Admin Metrics -->
+  <main class="section-py" style="background-color: var(--bg-dark);">
+    <div class="container">
+      <!-- Stat Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.25rem; margin-bottom: 3.5rem;">
+        <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+          <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Total Registered Users</span>
+          <div style="font-family: var(--font-serif-heading); font-size: 2rem; font-weight: 700; color: #ffffff; margin-top: 0.3rem;">{{ stats.total_users }}</div>
+        </div>
+
+        <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+          <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Total Knowledge Posts</span>
+          <div style="font-family: var(--font-serif-heading); font-size: 2rem; font-weight: 700; color: var(--accent-lime); margin-top: 0.3rem;">{{ stats.total_knowledge }}</div>
+        </div>
+
+        <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-lime);">
+          <span style="font-size: 0.78rem; color: var(--accent-lime); text-transform: uppercase; font-weight: 700;">Pending Approval</span>
+          <div style="font-family: var(--font-serif-heading); font-size: 2rem; font-weight: 700; color: #ffffff; margin-top: 0.3rem;">{{ stats.pending_knowledge }}</div>
+        </div>
+
+        <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+          <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Approved Posts</span>
+          <div style="font-family: var(--font-serif-heading); font-size: 2rem; font-weight: 700; color: #5cb85c; margin-top: 0.3rem;">{{ stats.approved_knowledge }}</div>
+        </div>
+
+        <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+          <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Verified Knowledge</span>
+          <div style="font-family: var(--font-serif-heading); font-size: 2rem; font-weight: 700; color: var(--accent-lime); margin-top: 0.3rem;">{{ stats.verified_knowledge }}</div>
+        </div>
+
+        <div style="background: var(--bg-surface); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+          <span style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Active Reports</span>
+          <div style="font-family: var(--font-serif-heading); font-size: 2rem; font-weight: 700; color: #ff6b6b; margin-top: 0.3rem;">{{ stats.pending_reports }}</div>
+        </div>
+      </div>
+
+      <!-- Pending Verification Queue -->
+      <div style="margin-bottom: 3.5rem;">
+        <h3 style="font-family: var(--font-serif-heading); font-size: 1.35rem; color: #ffffff; margin-bottom: 1rem;">
+          Submissions Awaiting Verification & Approval ({{ pending_queue|length }})
+        </h3>
+
+        <div style="overflow-x: auto;">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Submitted Post Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Submitted Date</th>
+                <th>Status</th>
+                <th>Moderation Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in pending_queue %}
+              <tr>
+                <td>
+                  <a href="{{ url_for('knowledge_detail', knowledge_id=item.id) }}" style="color: #ffffff; font-weight: 600; font-size: 0.95rem;">{{ item.title }}</a>
+                  <div style="font-size: 0.78rem; color: var(--text-muted);">Skill Level: {{ item.skill_level }} • {{ item.location }}</div>
+                </td>
+                <td>{{ item.author_name }}</td>
+                <td><span class="status-tag" style="background: rgba(255,255,255,0.08);">{{ item.category_name }}</span></td>
+                <td>{{ item.created_at }}</td>
+                <td><span class="admin-status-badge status-tag status-seeking">Pending</span></td>
+                <td>
+                  <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                    <form action="{{ url_for('admin_approve_knowledge', knowledge_id=item.id) }}" method="POST">
+                      <button type="submit" class="btn-interaction" style="width: auto; padding: 0.35rem 0.8rem; font-size: 0.78rem; background: var(--accent-lime); color: var(--text-dark); border-color: var(--accent-lime); font-weight: 700;">Approve</button>
+                    </form>
+                    <form action="{{ url_for('admin_reject_knowledge', knowledge_id=item.id) }}" method="POST">
+                      <button type="submit" class="btn-interaction" style="width: auto; padding: 0.35rem 0.8rem; font-size: 0.78rem; color: #ff6b6b;">Reject</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No pending knowledge submissions in the queue.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Approved Knowledge Records (Verification & Deletion Control) -->
+      <div style="margin-bottom: 3.5rem;">
+        <h3 style="font-family: var(--font-serif-heading); font-size: 1.35rem; color: #ffffff; margin-bottom: 1rem;">
+          Approved Knowledge Posts & Verification Control ({{ approved_list|length }})
+        </h3>
+
+        <div style="overflow-x: auto;">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Verification Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in approved_list %}
+              <tr>
+                <td>
+                  <a href="{{ url_for('knowledge_detail', knowledge_id=item.id) }}" style="color: #ffffff; font-weight: 600;">{{ item.title }}</a>
+                </td>
+                <td>{{ item.author_name }}</td>
+                <td>{{ item.category_name }}</td>
+                <td>
+                  {% if item.is_verified %}
+                    <span class="status-tag status-completed">✓ Verified</span>
+                  {% else %}
+                    <span style="color: var(--text-muted); font-size: 0.84rem;">Not Verified</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                    {% if not item.is_verified %}
+                    <form action="{{ url_for('admin_verify_knowledge', knowledge_id=item.id) }}" method="POST">
+                      <button type="submit" class="btn-interaction" style="width: auto; padding: 0.35rem 0.8rem; font-size: 0.78rem; background: var(--accent-lime-muted); color: var(--accent-lime); border-color: var(--accent-lime);">Verify Vault ✓</button>
+                    </form>
+                    {% endif %}
+                    <form action="{{ url_for('admin_delete_knowledge', knowledge_id=item.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this knowledge record?');">
+                      <button type="submit" class="btn-interaction" style="width: auto; padding: 0.35rem 0.8rem; font-size: 0.78rem; color: #ff6b6b; border-color: rgba(255,107,107,0.3);">Delete</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- User Reports Queue -->
+      <div style="margin-bottom: 3.5rem;">
+        <h3 style="font-family: var(--font-serif-heading); font-size: 1.35rem; color: #ffffff; margin-bottom: 1rem;">
+          Community Reports Queue ({{ reports_list|length }})
+        </h3>
+
+        <div style="overflow-x: auto;">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Reported Knowledge</th>
+                <th>Reported By</th>
+                <th>Reason</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rep in reports_list %}
+              <tr>
+                <td><a href="{{ url_for('knowledge_detail', knowledge_id=rep.knowledge_id) }}" style="color: #ffffff;">{{ rep.knowledge_title }}</a></td>
+                <td>{{ rep.reporter_name }}</td>
+                <td><strong style="color: #ff6b6b;">{{ rep.reason }}</strong></td>
+                <td>{{ rep.description }}</td>
+                <td>
+                  <span class="status-tag {% if rep.status == 'pending' %}status-seeking{% else %}status-completed{% endif %}">{{ rep.status|capitalize }}</span>
+                </td>
+                <td>
+                  {% if rep.status == 'pending' %}
+                  <form action="{{ url_for('admin_resolve_report', report_id=rep.id) }}" method="POST">
+                    <button type="submit" class="btn-nav-register" style="padding: 0.35rem 0.8rem; font-size: 0.78rem;">Mark Resolved</button>
+                  </form>
+                  {% endif %}
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No active community reports.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Registered Users List -->
+      <div>
+        <h3 style="font-family: var(--font-serif-heading); font-size: 1.35rem; color: #ffffff; margin-bottom: 1rem;">
+          Registered Community Users ({{ users_list|length }})
+        </h3>
+        <div style="overflow-x: auto;">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Location</th>
+                <th>Joined Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in users_list %}
+              <tr>
+                <td>#{{ u.id }}</td>
+                <td><a href="{{ url_for('profile', user_id=u.id) }}" style="color: #ffffff; font-weight: 600;">{{ u.name }}</a></td>
+                <td>{{ u.email }}</td>
+                <td><span class="status-tag {% if u.role == 'admin' %}status-completed{% else %}status-in-progress{% endif %}">{{ u.role|capitalize }}</span></td>
+                <td>{{ u.location }}</td>
+                <td>{{ u.created_at }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+{% endblock %}

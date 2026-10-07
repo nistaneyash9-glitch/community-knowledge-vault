@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Share Knowledge - Community Knowledge Vault{% endblock %}
+
+{% block content %}
+  <!-- Page Banner -->
+  <section class="page-banner">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="{{ url_for('index') }}">Home</a>
+        <span>/</span>
+        <span style="color: var(--accent-lime);">Share Knowledge</span>
+      </div>
+      <span class="section-tag">COMMUNITY SHARING PROCESS</span>
+      <h1 class="page-banner-title">Document & Share Local Knowledge</h1>
+      <p class="page-banner-subtitle">
+        Share your practical expertise and local knowledge. Submitted posts are reviewed by administrators before publishing.
+      </p>
+    </div>
+  </section>
+
+  <!-- Form Container -->
+  <main class="section-py" style="background-color: var(--bg-dark);">
+    <div class="container container-narrow">
+      <div class="form-card-container">
+        <form action="{{ url_for('share') }}" method="POST" enctype="multipart/form-data">
+          <!-- Title -->
+          <div class="form-group">
+            <label for="title" class="form-label">Knowledge / Craft Title *</label>
+            <input type="text" id="title" name="title" class="form-control" placeholder="e.g. Traditional Organic Farming Techniques" required>
+            <div class="form-hint">Choose a clear, descriptive title that makes this technique easy to discover.</div>
+          </div>
+
+          <!-- Category & Skill Level -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" class="form-group">
+            <div>
+              <label for="category_id" class="form-label">Category *</label>
+              <select id="category_id" name="category_id" class="form-control" required>
+                <option value="" disabled selected>Select category...</option>
+                {% for cat in categories %}
+                  <option value="{{ cat.id }}">{{ cat.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div>
+              <label for="skill_level" class="form-label">Skill Level</label>
+              <select id="skill_level" name="skill_level" class="form-control">
+                <option value="Beginner">Beginner - Anyone can learn</option>
+                <option value="Intermediate" selected>Intermediate - Some basics needed</option>
+                <option value="Advanced">Advanced - In-depth expertise</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Location & Language -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" class="form-group">
+            <div>
+              <label for="location" class="form-label">Location Origin</label>
+              <input type="text" id="location" name="location" class="form-control" value="{{ session.get('location', 'Amravati') }}">
+            </div>
+            <div>
+              <label for="language" class="form-label">Language</label>
+              <input type="text" id="language" name="language" class="form-control" value="English">
+            </div>
+          </div>
+
+          <!-- Tags -->
+          <div class="form-group">
+            <label for="tags" class="form-label">Search Tags</label>
+            <input type="text" id="tags" name="tags" class="form-control" placeholder="e.g. organic, farming, soil, techniques">
+            <div class="form-hint">Separate keywords with commas.</div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label for="description" class="form-label">Step-by-Step Description & Details *</label>
+            <textarea id="description" name="description" class="form-control" rows="6" placeholder="Describe the tools required, step-by-step instructions, and useful tips..." required></textarea>
+          </div>
+
+          <!-- Image Upload -->
+          <div class="form-group">
+            <label class="form-label">Upload Photograph or Reference Image</label>
+            <div class="dropzone-upload" onclick="document.getElementById('imageFile').click()">
+              <div class="dropzone-icon">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </div>
+              <h4 style="color: #ffffff; font-size: 1.05rem; margin-bottom: 0.35rem;" id="uploadStatusText">Click to select image file (JPG, PNG, WEBP)</h4>
+              <p style="font-size: 0.82rem; color: var(--text-muted);">Max file size: 25MB</p>
+              <input type="file" id="imageFile" name="image" accept=".jpg,.jpeg,.png,.webp" style="display: none;" onchange="if(this.files[0]) document.getElementById('uploadStatusText').innerText = 'Selected: ' + this.files[0].name;">
+            </div>
+          </div>
+
+          <!-- Submit Buttons -->
+          <div style="display: flex; gap: 1rem; margin-top: 2.5rem;">
+            <button type="submit" class="btn-primary-block" style="flex-grow: 1;">
+              Submit for Verification →
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+{% endblock %}

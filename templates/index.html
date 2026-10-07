@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Community Knowledge Vault (CKV) - Share • Learn • Preserve{% endblock %}
+
+{% block content %}
+  <!-- HERO SECTION (Recreating Reference Design Exactly) -->
+  <section class="hero-reference">
+    <div class="hero-background">
+      <img src="{{ url_for('static', filename='images/hero-bg.png') }}" alt="Historical Heritage Architecture" class="hero-bg-img">
+      <div class="hero-overlay"></div>
+    </div>
+
+    <!-- Center Editorial Content -->
+    <div class="hero-content-wrapper">
+      <div class="hero-editorial-center">
+        <h1 class="hero-headline">
+          Our <span class="highlight">community knowledge</span><br>
+          is our <span class="highlight">identity.</span>
+        </h1>
+        <p class="hero-subheadline">
+          Community Knowledge Vault (CKV) is a website for sharing useful local knowledge, skills, farming practices, recipes and community stories from Amravati.
+        </p>
+        <div>
+          <a href="{{ url_for('explore') }}" class="hero-cta-btn">
+            GET INVOLVED <span class="arrow">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Feature Strip Dock -->
+    <div class="hero-bottom-dock">
+      <div class="feature-strip-grid">
+        <!-- Item 1: Share Knowledge -->
+        <a href="{{ url_for('share') }}" class="feature-strip-item">
+          <div class="feature-icon-wrap">
+            <svg viewBox="0 0 24 24">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div class="feature-texts">
+            <span class="feature-title">Share</span>
+            <span class="feature-subtitle">Knowledge</span>
+          </div>
+        </a>
+
+        <!-- Item 2: Learn From Others -->
+        <a href="{{ url_for('explore') }}" class="feature-strip-item">
+          <div class="feature-icon-wrap">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              <line x1="8" y1="6" x2="16" y2="6"></line>
+              <line x1="8" y1="10" x2="16" y2="10"></line>
+            </svg>
+          </div>
+          <div class="feature-texts">
+            <span class="feature-title">Learn</span>
+            <span class="feature-subtitle">From Others</span>
+          </div>
+        </a>
+
+        <!-- Item 3: Preserve Our Heritage -->
+        <a href="{{ url_for('explore') }}" class="feature-strip-item">
+          <div class="feature-icon-wrap">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 21h18M5 21V10l7-6 7 6v11M9 21v-6h6v6"></path>
+              <circle cx="12" cy="7" r="1.5"></circle>
+            </svg>
+          </div>
+          <div class="feature-texts">
+            <span class="feature-title">Preserve</span>
+            <span class="feature-subtitle">Our Heritage</span>
+          </div>
+        </a>
+
+        <!-- Item 4: Build A Stronger Community -->
+        <a href="{{ url_for('about') }}" class="feature-strip-item">
+          <div class="feature-icon-wrap">
+            <svg viewBox="0 0 24 24">
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
+            </svg>
+          </div>
+          <div class="feature-texts">
+            <span class="feature-title">Build</span>
+            <span class="feature-subtitle">A Stronger Community</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Sub-bar -->
+      <div class="hero-metadata-bar">
+        <div class="metadata-content">
+          <div class="metadata-location">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>Amravati, Our Home</span>
+          </div>
+          <div class="metadata-pillars">
+            People <span>|</span> Knowledge <span>|</span> Culture <span>|</span> Future
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 1: EXPLORE KNOWLEDGE (FEATURED CARDS FROM DATABASE) -->
+  <section class="section-py" style="background-color: var(--bg-dark);">
+    <div class="container">
+      <div class="section-header flex-between">
+        <div>
+          <span class="section-tag">RECENT KNOWLEDGE</span>
+          <h2 class="section-title">Explore Knowledge</h2>
+          <p class="section-description">
+            Explore knowledge shared by people from the community.
+          </p>
+        </div>
+        <a href="{{ url_for('explore') }}" class="link-arrow">
+          View All Knowledge <span>→</span>
+        </a>
+      </div>
+
+      <div class="knowledge-grid">
+        {% for item in featured_knowledge %}
+        <article class="knowledge-card">
+          <div class="card-media-wrap">
+            {% if item.image and item.image.startswith('http') %}
+              <img src="{{ item.image }}" alt="{{ item.title }}">
+            {% elif item.image %}
+              <img src="{{ url_for('uploaded_file', filename=item.image) }}" alt="{{ item.title }}">
+            {% else %}
+              <img src="https://images.unsplash.com/photo-1590736969955-71cc94801759?w=800&auto=format&fit=crop&q=80" alt="{{ item.title }}">
+            {% endif %}
+
+            <span class="card-category-badge">{{ item.category_name }}</span>
+            {% if item.is_verified %}
+              <span style="position: absolute; top: 14px; right: 14px; background: var(--accent-lime); color: var(--text-dark); font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 999px;">✓ Verified</span>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top">
+              <span>{{ item.skill_level }}</span>
+              {% if item.avg_rating and item.avg_rating > 0 %}
+                <span>⭐ {{ "%.1f"|format(item.avg_rating) }} ({{ item.helpful_count or 0 }} helpful)</span>
+              {% else %}
+                <span>No ratings yet ({{ item.helpful_count or 0 }} helpful)</span>
+              {% endif %}
+            </div>
+            <h3 class="card-title">
+              <a href="{{ url_for('knowledge_detail', knowledge_id=item.id) }}">{{ item.title }}</a>
+            </h3>
+            <p class="card-excerpt">
+              {{ item.description|truncate(120) }}
+            </p>
+            <div class="card-footer">
+              <div class="card-author-info">
+                <img src="{{ item.author_image if (item.author_image and 'unsplash.com/photo-' not in item.author_image) else ('https://ui-avatars.com/api/?name=' ~ (item.author_name|urlencode) ~ '&background=141c16&color=d8f844&bold=true&size=100') }}" alt="{{ item.author_name }}" class="author-avatar" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+                <span class="author-name">{{ item.author_name }}</span>
+              </div>
+              <a href="{{ url_for('knowledge_detail', knowledge_id=item.id) }}" class="card-view-link">View →</a>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: KNOWLEDGE CATEGORIES FROM DATABASE -->
+  <section class="section-py" style="background-color: var(--bg-surface);">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-tag">CATEGORIES</span>
+        <h2 class="section-title">Knowledge Categories</h2>
+        <p class="section-description">
+          Browse through key categories including Farming, Gardening, Local History, Cooking, and Traditional Skills.
+        </p>
+      </div>
+
+      <div class="categories-grid">
+        {% for cat in categories %}
+        <a href="{{ url_for('explore', category=cat.name) }}" class="category-card">
+          <div class="cat-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+            </svg>
+          </div>
+          <div>
+            <h3 class="category-name">{{ cat.name }}</h3>
+            <span class="category-count">{{ cat.knowledge_count or 0 }} Guides</span>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: HOW CKV WORKS -->
+  <section class="section-py how-it-works-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-tag">HOW IT WORKS</span>
+        <h2 class="section-title">How CKV Works</h2>
+        <p class="section-description">
+          Simple steps to share, discover, learn, and preserve local skills.
+        </p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <h3 class="step-title">Share</h3>
+          <p class="step-description">
+            Community members document their practical skills with step-by-step instructions and photographs.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <h3 class="step-title">Discover</h3>
+          <p class="step-description">
+            Search and explore posts across farming, gardening, local history, cooking, and traditional skills.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <h3 class="step-title">Learn</h3>
+          <p class="step-description">
+            Read practical guides, ask questions in Q&A, and send learning requests to connect with contributors.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">04</div>
+          <h3 class="step-title">Preserve</h3>
+          <p class="step-description">
+            Knowledge is reviewed by administrators to ensure accuracy, safety, and content quality.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: CALL TO ACTION -->
+  <section class="section-py" style="background-color: var(--bg-dark);">
+    <div class="container">
+      <div class="cta-banner">
+        <h2 class="cta-title">"Everyone knows something worth sharing."</h2>
+        <p class="cta-text">
+          Share your knowledge and help keep local skills and history alive. Whether it is a traditional recipe, gardening tip, or local story, your contribution helps.
+        </p>
+        <a href="{{ url_for('share') }}" class="cta-button">
+          Share Your Knowledge <span style="font-size: 1.2rem;">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+{% endblock %}

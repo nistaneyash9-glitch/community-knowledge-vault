@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}{{ target_user.name }} - Profile - Community Knowledge Vault{% endblock %}
+
+{% block content %}
+  <!-- Profile Hero Banner -->
+  <section class="page-banner" style="padding-bottom: 2rem;">
+    <div class="container">
+      <div style="display: flex; flex-wrap: wrap; gap: 2.5rem; align-items: center;">
+        {% if target_user.profile_image and target_user.profile_image.startswith('http') and 'unsplash.com/photo-' not in target_user.profile_image %}
+          <img src="{{ target_user.profile_image }}" alt="{{ target_user.name }}" style="width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--accent-lime); object-fit: cover; box-shadow: 0 10px 30px var(--accent-lime-glow);" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+        {% elif target_user.profile_image and target_user.profile_image != 'default_avatar.jpg' and not target_user.profile_image.startswith('http') %}
+          <img src="{{ url_for('uploaded_file', filename=target_user.profile_image) }}" alt="{{ target_user.name }}" style="width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--accent-lime); object-fit: cover; box-shadow: 0 10px 30px var(--accent-lime-glow);" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+        {% else %}
+          <img src="https://ui-avatars.com/api/?name={{ target_user.name|urlencode }}&background=141c16&color=d8f844&bold=true&size=300" alt="{{ target_user.name }}" style="width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--accent-lime); object-fit: cover; box-shadow: 0 10px 30px var(--accent-lime-glow);" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+        {% endif %}
+
+        <div style="flex-grow: 1;">
+          <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+            <h1 class="page-banner-title" style="font-size: 2.2rem; margin-bottom: 0;">{{ target_user.name }}</h1>
+            <span class="status-tag status-completed" style="font-size: 0.78rem;">✓ {{ target_user.role|capitalize }}</span>
+          </div>
+
+          <p style="color: var(--text-secondary); max-width: 680px; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">
+            Sharing local skills and community knowledge in {{ target_user.location }}.
+          </p>
+
+          <div style="display: flex; gap: 1.5rem; font-size: 0.84rem; color: var(--text-muted); flex-wrap: wrap;">
+            <span>📍 {{ target_user.location }}</span>
+            <span>🗣️ {{ target_user.language }}</span>
+            <span>📅 Member since {{ target_user.created_at.strftime('%B %Y') if target_user.created_at and target_user.created_at.strftime is defined else '2026' }}</span>
+          </div>
+        </div>
+
+        {% if session.get('user_id') == target_user.id %}
+        <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+          <button onclick="document.getElementById('editProfileModal').style.display='flex'" class="btn-nav-login" style="padding: 0.65rem 1.4rem; font-size: 0.84rem; cursor: pointer;">
+            ✏️ Edit Profile
+          </button>
+          <a href="{{ url_for('share') }}" class="hero-cta-btn" style="padding: 0.65rem 1.6rem; font-size: 0.84rem;">
+            + Share Knowledge
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Personal Contribution Statistics Row -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.25rem; margin-top: 2.5rem; border-top: 1px solid var(--border-light); padding-top: 1.75rem;">
+        <!-- Stat 1: Knowledge Shared -->
+        <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+          <div style="font-family: var(--font-serif-heading); font-size: 1.8rem; font-weight: 700; color: var(--accent-lime);">{{ stats.knowledge_shared }}</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Knowledge Shared</div>
+        </div>
+
+        <!-- Stat 2: Helpful Votes Received -->
+        <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+          <div style="font-family: var(--font-serif-heading); font-size: 1.8rem; font-weight: 700; color: #ffffff;">{{ stats.helpful_votes }}</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Helpful Votes Received</div>
+        </div>
+
+        <!-- Stat 3: Learning Requests -->
+        <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+          <div style="font-family: var(--font-serif-heading); font-size: 1.8rem; font-weight: 700; color: #ffffff;">{{ stats.learning_requests }}</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Learning Requests</div>
+        </div>
+
+        <!-- Stat 4: Average Rating -->
+        <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+          <div style="font-family: var(--font-serif-heading); font-size: 1.8rem; font-weight: 700; color: var(--accent-lime);">
+            {% if stats.avg_rating and stats.avg_rating > 0 %}
+              {{ "%.1f"|format(stats.avg_rating|float) }} ★
+            {% else %}
+              N/A
+            {% endif %}
+          </div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Average Rating</div>
+        </div>
+
+        <!-- Stat 5: Verified Knowledge -->
+        <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); text-align: center;">
+          <div style="font-family: var(--font-serif-heading); font-size: 1.8rem; font-weight: 700; color: #ffffff;">{{ stats.verified_count }}</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase;">Verified Knowledge</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Published Vaults Section -->
+  <main class="section-py" style="background-color: var(--bg-dark);">
+    <div class="container">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem;">
+        <h3 style="font-family: var(--font-serif-heading); font-size: 1.35rem; color: #ffffff;">
+          Knowledge Posts Documented by {{ target_user.name }} ({{ user_knowledge|length }})
+        </h3>
+      </div>
+
+      <div class="knowledge-grid">
+        {% for item in user_knowledge %}
+        <article class="knowledge-card">
+          <div class="card-media-wrap">
+            {% if item.image and item.image.startswith('http') %}
+              <img src="{{ item.image }}" alt="{{ item.title }}">
+            {% elif item.image %}
+              <img src="{{ url_for('uploaded_file', filename=item.image) }}" alt="{{ item.title }}">
+            {% else %}
+              <img src="https://images.unsplash.com/photo-1590736969955-71cc94801759?w=800&auto=format&fit=crop&q=80" alt="{{ item.title }}">
+            {% endif %}
+
+            <span class="card-category-badge">{{ item.category_name }}</span>
+            {% if item.status == 'pending' %}
+              <span class="status-tag status-seeking" style="position: absolute; top: 14px; right: 14px;">Pending Review</span>
+            {% elif item.is_verified %}
+              <span style="position: absolute; top: 14px; right: 14px; background: var(--accent-lime); color: var(--text-dark); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 999px;">✓ Verified</span>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top">
+              <span>{{ item.skill_level }}</span>
+              {% if item.avg_rating and item.avg_rating > 0 %}
+                <span>⭐ {{ "%.1f"|format(item.avg_rating|float) }}</span>
+              {% else %}
+                <span>No ratings yet</span>
+              {% endif %}
+            </div>
+            <h3 class="card-title">
+              <a href="{{ url_for('knowledge_detail', knowledge_id=item.id) }}">{{ item.title }}</a>
+            </h3>
+            <p class="card-excerpt">{{ item.description|truncate(100) }}</p>
+            <div class="card-footer">
+              <span style="font-size: 0.8rem; color: var(--text-muted);">{{ item.helpful_count or 0 }} Helpful votes</span>
+              <a href="{{ url_for('knowledge_detail', knowledge_id=item.id) }}" class="card-view-link">Open Post →</a>
+            </div>
+          </div>
+        </article>
+        {% else %}
+        <p style="color: var(--text-muted); grid-column: 1 / -1; text-align: center; padding: 3rem;">No published knowledge records yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </main>
+
+  {% if session.get('user_id') == target_user.id %}
+  <!-- EDIT PROFILE MODAL -->
+  <div class="search-modal-overlay" id="editProfileModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center;">
+    <div class="search-modal-box" style="max-width: 520px; width: 90%; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="font-family: var(--font-serif-heading); color: #ffffff; font-size: 1.3rem; margin: 0;">Edit Contributor Profile</h3>
+        <button onclick="document.getElementById('editProfileModal').style.display='none'" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+
+      <form action="{{ url_for('edit_profile') }}" method="POST" enctype="multipart/form-data">
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label class="form-label" style="display: block; color: var(--text-secondary); margin-bottom: 0.4rem; font-size: 0.88rem;">Full Name</label>
+          <input type="text" name="name" value="{{ target_user.name }}" required class="form-control" style="width: 100%; padding: 0.75rem; background: var(--bg-surface); border: 1px solid var(--border-light); color: #ffffff; border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label class="form-label" style="display: block; color: var(--text-secondary); margin-bottom: 0.4rem; font-size: 0.88rem;">Location / Region</label>
+          <input type="text" name="location" value="{{ target_user.location }}" required class="form-control" style="width: 100%; padding: 0.75rem; background: var(--bg-surface); border: 1px solid var(--border-light); color: #ffffff; border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label class="form-label" style="display: block; color: var(--text-secondary); margin-bottom: 0.4rem; font-size: 0.88rem;">Preferred Language</label>
+          <input type="text" name="language" value="{{ target_user.language }}" required class="form-control" style="width: 100%; padding: 0.75rem; background: var(--bg-surface); border: 1px solid var(--border-light); color: #ffffff; border-radius: var(--radius-sm);">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label class="form-label" style="display: block; color: var(--text-secondary); margin-bottom: 0.4rem; font-size: 0.88rem;">Profile Picture (Optional)</label>
+          <input type="file" name="profile_image" accept="image/*" class="form-control" style="width: 100%; padding: 0.6rem; background: var(--bg-surface); border: 1px solid var(--border-light); color: var(--text-muted); border-radius: var(--radius-sm);">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+          <button type="button" onclick="document.getElementById('editProfileModal').style.display='none'" class="btn-nav-login" style="padding: 0.6rem 1.2rem; cursor: pointer;">Cancel</button>
+          <button type="submit" class="hero-cta-btn" style="padding: 0.6rem 1.4rem; cursor: pointer;">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}

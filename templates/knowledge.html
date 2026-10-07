@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.title }} - Community Knowledge Vault{% endblock %}
+
+{% block content %}
+  <!-- Page Banner -->
+  <section class="page-banner">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="{{ url_for('index') }}">Home</a>
+        <span>/</span>
+        <a href="{{ url_for('explore') }}">Explore</a>
+        <span>/</span>
+        <span style="color: var(--accent-lime);">{{ item.title }}</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <span class="section-tag">{{ item.category_name|upper }} • POST ID: #TS-{{ item.id }}</span>
+        {% if item.is_verified %}
+          <span class="status-tag status-completed" style="font-size: 0.78rem;">✓ Verified Knowledge</span>
+        {% endif %}
+      </div>
+      <h1 class="page-banner-title">{{ item.title }}</h1>
+      <p class="page-banner-subtitle">
+        Documented by {{ item.author_name }} in {{ item.location }}.
+      </p>
+    </div>
+  </section>
+
+  <!-- Article Layout -->
+  <main style="background-color: var(--bg-dark);">
+    <div class="container">
+      <div class="article-layout">
+        <!-- Main Article Body -->
+        <article class="article-prose">
+          {% if item.image and item.image.startswith('http') %}
+            <img src="{{ item.image }}" alt="{{ item.title }}" class="article-hero-img">
+          {% elif item.image %}
+            <img src="{{ url_for('uploaded_file', filename=item.image) }}" alt="{{ item.title }}" class="article-hero-img">
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1590736969955-71cc94801759?w=1200&auto=format&fit=crop&q=80" alt="{{ item.title }}" class="article-hero-img">
+          {% endif %}
+
+          <h2>Knowledge Documentation & Overview</h2>
+          <p>{{ item.description }}</p>
+
+          <div class="heritage-note-box">
+            <h4>Community Context</h4>
+            <p>
+              <em>"Knowledge remains living when shared generously with neighbors and learners."</em>
+              <br>— <strong>{{ item.author_name }} ({{ item.location }})</strong>
+            </p>
+          </div>
+
+          <h2>Overview & Details</h2>
+          <ul>
+            <li><strong>Category:</strong> {{ item.category_name }}</li>
+            <li><strong>Skill Level Required:</strong> {{ item.skill_level }}</li>
+            <li><strong>Language:</strong> {{ item.language }}</li>
+            <li><strong>Location Origin:</strong> {{ item.location }}</li>
+            <li><strong>Search Tags:</strong> {{ item.tags or 'farming, cooking, local history' }}</li>
+          </ul>
+
+          <!-- Community Q&A Section -->
+          <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-light);">
+            <h3 style="font-family: var(--font-serif-heading); font-size: 1.5rem; color: #ffffff; margin-bottom: 1.5rem;">
+              Community Questions & Answers ({{ questions|length }})
+            </h3>
+
+            <!-- Question Form -->
+            {% if session.get('user_id') %}
+            <form action="{{ url_for('ask_question', knowledge_id=item.id) }}" method="POST" style="margin-bottom: 2.5rem;">
+              <div class="form-group">
+                <label for="question_text" class="form-label">Ask a question about this knowledge:</label>
+                <textarea id="question_text" name="question_text" class="form-control" rows="3" placeholder="Ask {{ item.author_name }} a question..." required></textarea>
+              </div>
+              <button type="submit" class="btn-interaction" style="width: auto; padding: 0.75rem 1.8rem; background-color: var(--accent-lime); color: var(--text-dark); border-color: var(--accent-lime); font-weight: 700;">
+                Post Community Question
+              </button>
+            </form>
+            {% else %}
+            <div style="background: var(--bg-surface); padding: 1rem 1.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); margin-bottom: 2rem; font-size: 0.9rem; color: var(--text-muted);">
+              Please <a href="{{ url_for('login') }}" style="color: var(--accent-lime); font-weight: 600;">Sign In</a> to post questions or interact with this knowledge.
+            </div>
+            {% endif %}
+
+            <!-- Questions List -->
+            <div id="questionsList">
+              {% for q in questions %}
+              <div style="padding: 1.25rem; margin-bottom: 1.25rem; background-color: var(--bg-surface-elevated); border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                  <strong style="color: var(--accent-lime); font-size: 0.9rem;">{{ q.asker_name }}</strong>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">{{ q.created_at }}</span>
+                </div>
+                <p style="font-size: 0.94rem; color: #ffffff; line-height: 1.5; margin-bottom: 0.75rem;">{{ q.question_text }}</p>
+
+                <!-- Answers List -->
+                {% if q.answers %}
+                  <div style="margin-left: 1rem; padding-left: 1rem; border-left: 2px solid var(--accent-lime);">
+                    {% for ans in q.answers %}
+                    <div style="margin-top: 0.5rem; font-size: 0.88rem; color: var(--text-secondary);">
+                      <strong style="color: #ffffff;">{{ ans.answerer_name }}:</strong> {{ ans.answer_text }}
+                    </div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                <!-- Answer Form for Contributor / Admin -->
+                {% if session.get('user_id') == item.user_id or session.get('role') == 'admin' %}
+                <form action="{{ url_for('answer_question', question_id=q.id) }}" method="POST" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                  <input type="text" name="answer_text" class="form-control" placeholder="Write an answer..." required style="padding: 0.45rem 0.8rem; font-size: 0.85rem;">
+                  <button type="submit" class="btn-nav-register" style="padding: 0.45rem 1rem; font-size: 0.82rem; white-space: nowrap;">Answer</button>
+                </form>
+                {% endif %}
+              </div>
+              {% else %}
+              <p style="color: var(--text-muted); font-size: 0.9rem;">No questions asked yet. Be the first to inquire!</p>
+              {% endfor %}
+            </div>
+          </div>
+        </article>
+
+        <!-- Sidebar Widgets -->
+        <aside class="article-sidebar">
+          <!-- Action Buttons Widget -->
+          <div class="sidebar-widget">
+            <h4 class="widget-title">Interact & Learn</h4>
+            <div class="action-buttons-group">
+              <!-- Helpful Vote -->
+              <form action="{{ url_for('helpful_vote', knowledge_id=item.id) }}" method="POST">
+                <button type="submit" class="btn-interaction {% if has_voted_helpful %}active{% endif %}">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                  </svg>
+                  <span>Mark Helpful ({{ item.helpful_count or 0 }})</span>
+                </button>
+              </form>
+
+              <!-- Request To Learn -->
+              {% if session.get('user_id') and session.get('user_id') != item.user_id %}
+              <button class="btn-interaction" style="background: var(--accent-lime); color: var(--text-dark); border-color: var(--accent-lime); font-weight: 700;" onclick="document.getElementById('requestLearnModal').classList.add('active')">
+                🎓 Request To Learn
+              </button>
+              {% elif not session.get('user_id') %}
+              <a href="{{ url_for('login') }}" class="btn-interaction" style="background: var(--accent-lime); color: var(--text-dark); text-align: center;">
+                Login to Request Learning
+              </a>
+              {% endif %}
+
+              <!-- Report Knowledge -->
+              {% if session.get('user_id') %}
+              <button class="btn-interaction" style="color: #ff6b6b; border-color: rgba(255,107,107,0.3);" onclick="document.getElementById('reportModal').classList.add('active')">
+                🚩 Report Record
+              </button>
+              {% endif %}
+            </div>
+
+            <!-- Rating Summary -->
+            <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-light);">
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Community Rating:</span>
+              <div style="font-size: 1.4rem; color: #ffca28; font-weight: 700; margin-top: 0.3rem;">
+                {% if item.avg_rating and item.avg_rating > 0 %}
+                  ⭐ {{ "%.1f"|format(item.avg_rating) }} <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 400;">({{ ratings|length }} reviews)</span>
+                {% else %}
+                  <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: 400;">No ratings yet</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Contributor Profile Card -->
+          <div class="sidebar-widget">
+            <h4 class="widget-title">Knowledge Contributor</h4>
+            <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+              <img src="{{ item.author_image if (item.author_image and 'unsplash.com/photo-' not in item.author_image) else ('https://ui-avatars.com/api/?name=' ~ (item.author_name|urlencode) ~ '&background=141c16&color=d8f844&bold=true&size=120') }}" alt="{{ item.author_name }}" style="width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--accent-lime); object-fit: cover;" onerror="this.src='{{ url_for('static', filename='images/default_avatar.svg') }}'">
+              <div>
+                <h5 style="color: #ffffff; font-size: 1.05rem; font-family: var(--font-serif);">
+                  <a href="{{ url_for('profile', user_id=item.user_id) }}">{{ item.author_name }}</a>
+                </h5>
+                <span style="font-size: 0.78rem; color: var(--accent-lime); font-weight: 600;">Contributor • {{ item.author_location }}</span>
+              </div>
+            </div>
+            <a href="{{ url_for('profile', user_id=item.user_id) }}" class="link-arrow" style="font-size: 0.85rem;">View Contributor Profile →</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL: REQUEST TO LEARN -->
+  {% if session.get('user_id') %}
+  <div class="search-modal-overlay" id="requestLearnModal">
+    <div class="search-modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem;">
+        <h3 style="font-family: var(--font-serif-heading); font-size: 1.35rem; color: #ffffff;">Send Learning Request</h3>
+        <button onclick="document.getElementById('requestLearnModal').classList.remove('active')" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">×</button>
+      </div>
+      <form action="{{ url_for('request_learn', knowledge_id=item.id) }}" method="POST">
+        <div class="form-group">
+          <label class="form-label">Message for {{ item.author_name }}:</label>
+          <textarea name="message" class="form-control" rows="4" placeholder="Hello! I would love to learn this skill from you in Amravati..." required></textarea>
+        </div>
+        <button type="submit" class="btn-primary-block">Send Learning Request →</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: REPORT KNOWLEDGE -->
+  <div class="search-modal-overlay" id="reportModal">
+    <div class="search-modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem;">
+        <h3 style="font-family: var(--font-serif-heading); font-size: 1.35rem; color: #ffffff;">Report Knowledge Record</h3>
+        <button onclick="document.getElementById('reportModal').classList.remove('active')" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">×</button>
+      </div>
+      <form action="{{ url_for('report_knowledge', knowledge_id=item.id) }}" method="POST">
+        <div class="form-group">
+          <label class="form-label">Reason for Reporting:</label>
+          <select name="reason" class="form-control" required>
+            <option value="Incorrect information">Incorrect information</option>
+            <option value="Inappropriate content">Inappropriate content</option>
+            <option value="Spam">Spam</option>
+            <option value="Duplicate content">Duplicate content</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Details / Description:</label>
+          <textarea name="description" class="form-control" rows="3" placeholder="Provide context for moderators..." required></textarea>
+        </div>
+        <button type="submit" class="btn-primary-block" style="background: #ff6b6b; color: #ffffff;">Submit Report for Admin Review</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}

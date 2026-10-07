@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Join Community - Community Knowledge Vault{% endblock %}
+
+{% block content %}
+  <main style="flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: calc(var(--header-height) + 3rem) 1.5rem 4rem; background: radial-gradient(circle at 50% 30%, rgba(216, 248, 68, 0.08) 0%, #08090c 70%);">
+    <div style="width: 100%; max-width: 520px;">
+      <div class="form-card-container" style="padding: 2.5rem 2rem;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <span class="section-tag">BECOME A PRESERVER</span>
+          <h1 style="font-family: var(--font-serif-heading); font-size: 1.85rem; color: #ffffff; margin-bottom: 0.5rem;">Join the Vault Community</h1>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">Contribute, preserve, and safeguard valuable local wisdom.</p>
+        </div>
+
+        <form action="{{ url_for('register') }}" method="POST" id="registerForm">
+          <div class="form-group">
+            <label for="name" class="form-label">Full Name *</label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Ramesh Patel or Ananya Sharma" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email Address *</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="name@domain.com" required>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;" class="form-group">
+            <div>
+              <label for="location" class="form-label">Location / Ward</label>
+              <input type="text" id="location" name="location" class="form-control" placeholder="Amravati Central" value="Amravati">
+            </div>
+            <div>
+              <label for="language" class="form-label">Preferred Language</label>
+              <input type="text" id="language" name="language" class="form-control" value="English">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;" class="form-group">
+            <div>
+              <label for="password" class="form-label">Password *</label>
+              <input type="password" id="password" name="password" class="form-control" placeholder="Minimum 6 chars" required>
+            </div>
+            <div>
+              <label for="confirm_password" class="form-label">Confirm Password *</label>
+              <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Re-enter password" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary-block" style="margin-top: 1rem;">
+            Create Free Community Account →
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.75rem; font-size: 0.88rem; color: var(--text-muted); border-top: 1px solid var(--border-light); padding-top: 1.25rem;">
+          Already have an account? <a href="{{ url_for('login') }}" style="color: var(--accent-lime); font-weight: 600;">Sign in here</a>
+        </div>
+      </div>
+    </div>
+  </main>
+{% endblock %}

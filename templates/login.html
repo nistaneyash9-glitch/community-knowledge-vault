@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In - Community Knowledge Vault{% endblock %}
+
+{% block content %}
+  <main style="flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: calc(var(--header-height) + 3rem) 1.5rem 4rem; background: radial-gradient(circle at 50% 30%, rgba(216, 248, 68, 0.08) 0%, #08090c 70%);">
+    <div style="width: 100%; max-width: 460px;">
+      <div class="form-card-container" style="padding: 2.5rem 2rem;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+          <span class="section-tag">COMMUNITY ACCESS</span>
+          <h1 style="font-family: var(--font-serif-heading); font-size: 1.85rem; color: #ffffff; margin-bottom: 0.5rem;">Sign In to CKV</h1>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">Continue safeguarding and archiving community knowledge.</p>
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-light); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
+          <span style="font-size: 0.78rem; color: var(--text-muted); width: 100%; font-weight: 500; margin-bottom: 0.25rem;">DEMO ACCOUNTS (Click to autofill):</span>
+          <button type="button" onclick="fillLogin('admin@amravati.in', 'admin123')" style="background: rgba(216, 248, 68, 0.15); color: var(--accent-lime); border: 1px solid var(--border-lime); padding: 0.35rem 0.65rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600; cursor: pointer;">⚡ Admin</button>
+          <button type="button" onclick="fillLogin('ramesh.patel@amravati.in', 'masterweaver2026')" style="background: rgba(255, 255, 255, 0.08); color: #ffffff; border: 1px solid var(--border-light); padding: 0.35rem 0.65rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer;">👤 Ramesh (User)</button>
+          <button type="button" onclick="fillLogin('ananya.sharma@amravati.edu', 'studentpass123')" style="background: rgba(255, 255, 255, 0.08); color: #ffffff; border: 1px solid var(--border-light); padding: 0.35rem 0.65rem; border-radius: 4px; font-size: 0.78rem; font-weight: 500; cursor: pointer;">👤 Ananya (User)</button>
+        </div>
+
+        <form action="{{ url_for('login') }}" method="POST" id="loginForm">
+          <div class="form-group">
+            <label for="loginEmail" class="form-label">Email Address</label>
+            <input type="email" id="loginEmail" name="email" class="form-control" placeholder="e.g. ramesh.patel@amravati.in" required>
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <label for="loginPassword" class="form-label" style="margin-bottom: 0;">Password</label>
+            </div>
+            <input type="password" id="loginPassword" name="password" class="form-control" placeholder="••••••••••••" required>
+          </div>
+
+          <button type="submit" class="btn-primary-block" style="margin-top: 1rem;">
+            Sign In to Vault →
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.75rem; font-size: 0.88rem; color: var(--text-muted); border-top: 1px solid var(--border-light); padding-top: 1.25rem;">
+          Don't have a community account? <a href="{{ url_for('register') }}" style="color: var(--accent-lime); font-weight: 600;">Register here</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function fillLogin(email, password) {
+      document.getElementById('loginEmail').value = email;
+      document.getElementById('loginPassword').value = password;
+    }
+  </script>
+{% endblock %}

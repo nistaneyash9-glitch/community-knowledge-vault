@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Learning Requests - Community Knowledge Vault{% endblock %}
+
+{% block content %}
+  <!-- Page Banner -->
+  <section class="page-banner">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="{{ url_for('index') }}">Home</a>
+        <span>/</span>
+        <span style="color: var(--accent-lime);">Learning Requests</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem;">
+        <div>
+          <span class="section-tag">COMMUNITY KNOWLEDGE EXCHANGE</span>
+          <h1 class="page-banner-title">My Learning Requests</h1>
+          <p class="page-banner-subtitle">
+            Connect directly with artisans, elders, and mentors for hands-on learning, guidance, and knowledge exchange.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="section-py" style="background-color: var(--bg-dark);">
+    <div class="container container-narrow">
+
+      <!-- Incoming Requests (Where User is Teacher) -->
+      <div style="margin-bottom: 3.5rem;">
+        <h2 style="font-family: var(--font-serif-heading); font-size: 1.5rem; color: #ffffff; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-light);">
+          Incoming Requests (Teaching Others) ({{ incoming_requests|length }})
+        </h2>
+
+        {% for req in incoming_requests %}
+        <div class="request-card">
+          <div style="flex-grow: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+              <span class="status-tag {% if req.status == 'pending' %}status-seeking{% elif req.status == 'accepted' %}status-in-progress{% elif req.status == 'completed' %}status-completed{% else %}status-seeking{% endif %}">
+                {{ req.status|capitalize }}
+              </span>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Learner: <strong>{{ req.learner_name }}</strong> • {{ req.created_at }}</span>
+            </div>
+            <h3 style="font-family: var(--font-serif); font-size: 1.25rem; color: #ffffff; margin-bottom: 0.5rem;">
+              Knowledge: <a href="{{ url_for('knowledge_detail', knowledge_id=req.knowledge_id) }}" style="color: var(--accent-lime);">{{ req.knowledge_title }}</a>
+            </h3>
+            <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.2rem;">
+              "{{ req.message }}"
+            </p>
+
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+              {% if req.status == 'pending' %}
+                <form action="{{ url_for('handle_request', request_id=req.id, action='accept') }}" method="POST">
+                  <button type="submit" class="btn-nav-register" style="padding: 0.4rem 1.2rem; font-size: 0.82rem;">Accept Request</button>
+                </form>
+                <form action="{{ url_for('handle_request', request_id=req.id, action='reject') }}" method="POST">
+                  <button type="submit" class="btn-interaction" style="width: auto; padding: 0.4rem 1rem; font-size: 0.82rem; color: #ff6b6b;">Reject</button>
+                </form>
+              {% elif req.status == 'accepted' %}
+                <form action="{{ url_for('handle_request', request_id=req.id, action='complete') }}" method="POST">
+                  <button type="submit" class="btn-interaction" style="width: auto; padding: 0.4rem 1.2rem; font-size: 0.82rem; background: var(--accent-lime); color: var(--text-dark); border-color: var(--accent-lime); font-weight: 700;">Mark Learning Completed ✓</button>
+                </form>
+              {% elif req.status == 'completed' %}
+                <span style="font-size: 0.84rem; color: var(--accent-lime); font-weight: 600;">✓ Learning interaction successfully completed</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <p style="color: var(--text-muted); padding: 1.5rem; background: var(--bg-surface); border-radius: var(--radius-sm);">No incoming learning requests at this time.</p>
+        {% endfor %}
+      </div>
+
+      <!-- Outgoing Requests (Where User is Learner) -->
+      <div>
+        <h2 style="font-family: var(--font-serif-heading); font-size: 1.5rem; color: #ffffff; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-light);">
+          My Outgoing Requests (Learning From Community Members) ({{ outgoing_requests|length }})
+        </h2>
+
+        {% for req in outgoing_requests %}
+        <div class="request-card">
+          <div style="flex-grow: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+              <span class="status-tag {% if req.status == 'pending' %}status-seeking{% elif req.status == 'accepted' %}status-in-progress{% elif req.status == 'completed' %}status-completed{% else %}status-seeking{% endif %}">
+                {{ req.status|capitalize }}
+              </span>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Teacher: <strong>{{ req.teacher_name }}</strong> • {{ req.created_at }}</span>
+            </div>
+            <h3 style="font-family: var(--font-serif); font-size: 1.25rem; color: #ffffff; margin-bottom: 0.5rem;">
+              <a href="{{ url_for('knowledge_detail', knowledge_id=req.knowledge_id) }}">{{ req.knowledge_title }}</a>
+            </h3>
+            <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1rem;">
+              "{{ req.message }}"
+            </p>
+
+            <!-- Submit Rating/Review if Completed and not yet rated -->
+            {% if req.status == 'completed' %}
+              {% if not req.has_rated %}
+              <div style="margin-top: 1rem; padding: 1rem; background: var(--bg-surface-elevated); border-radius: var(--radius-sm); border: 1px solid var(--border-lime);">
+                <h4 style="color: var(--accent-lime); font-size: 0.95rem; margin-bottom: 0.5rem;">Rate Your Learning Experience</h4>
+                <form action="{{ url_for('submit_rating', knowledge_id=req.knowledge_id) }}" method="POST">
+                  <input type="hidden" name="learning_request_id" value="{{ req.id }}">
+                  <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.75rem;">
+                    <label style="font-size: 0.85rem; color: #ffffff;">Rating:</label>
+                    <select name="rating" class="explore-sort-select" style="padding: 0.35rem 0.8rem;">
+                      <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                      <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                      <option value="3">⭐⭐⭐ (3/5)</option>
+                      <option value="2">⭐⭐ (2/5)</option>
+                      <option value="1">⭐ (1/5)</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <textarea name="review" class="form-control" rows="2" placeholder="Write a short review of your learning experience..." required></textarea>
+                  </div>
+                  <button type="submit" class="btn-nav-register" style="padding: 0.4rem 1.2rem; font-size: 0.82rem;">Submit Review</button>
+                </form>
+              </div>
+              {% else %}
+              <span style="font-size: 0.84rem; color: var(--accent-lime);">✓ Rating & Review submitted! Thank you for supporting elder mentorship.</span>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+        {% else %}
+        <p style="color: var(--text-muted); padding: 1.5rem; background: var(--bg-surface); border-radius: var(--radius-sm);">You have not sent any learning requests yet. Browse <a href="{{ url_for('explore') }}" style="color: var(--accent-lime);">Explore Knowledge</a> to send one!</p>
+        {% endfor %}
+      </div>
+
+    </div>
+  </main>
+{% endblock %}

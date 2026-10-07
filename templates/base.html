@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Community Knowledge Vault (CKV){% endblock %}</title>
+  <meta name="description" content="Community Knowledge Vault is dedicated to preserving and sharing local knowledge, skills, traditions, and experiences for future generations.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d8f844' stroke-width='2'><path d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'></path><path d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'></path></svg>">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- TOP NAVIGATION -->
+  <header class="site-header {% if request.endpoint != 'index' %}scrolled{% endif %}">
+    <div class="header-container">
+      <!-- Logo -->
+      <a href="{{ url_for('index') }}" class="brand-logo" aria-label="Community Knowledge Vault Home">
+        <div class="brand-icon">
+          <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 8C4 6.89543 4.89543 6 6 6H16C17.1046 6 18 6.89543 18 8V28C18 29.1046 17.1046 30 16 30H6C4.89543 30 4 29.1046 4 28V8Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M18 8C18 6.89543 18.8954 6 20 6H30C31.1046 6 32 6.89543 32 8V28C32 29.1046 31.1046 30 30 30H20C18.8954 30 18 29.1046 18 28V8Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M8 12H14M8 17H14M8 22H12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M22 12H28M22 17H28M22 22H26" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Community Knowledge Vault</span>
+          <span class="brand-tagline">Share • Learn • Preserve</span>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav class="main-nav" id="mainNav">
+        <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Home</a>
+        <a href="{{ url_for('explore') }}" class="nav-link {% if request.endpoint == 'explore' %}active{% endif %}">Explore</a>
+        <a href="{{ url_for('share') }}" class="nav-link {% if request.endpoint == 'share' %}active{% endif %}">Share Knowledge</a>
+        <a href="{{ url_for('requests_page') }}" class="nav-link {% if request.endpoint == 'requests_page' %}active{% endif %}">Learning Requests</a>
+        <a href="{{ url_for('about') }}" class="nav-link {% if request.endpoint == 'about' %}active{% endif %}">About</a>
+        {% if session.get('role') == 'admin' %}
+        <a href="{{ url_for('admin') }}" class="nav-link {% if request.endpoint == 'admin' %}active{% endif %}" style="color: var(--accent-lime);">Admin Console</a>
+        {% endif %}
+      </nav>
+
+      <!-- Right Actions -->
+      <div class="header-actions">
+        <button class="search-trigger-btn" aria-label="Search Vault" title="Press '/' to search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+
+        {% if session.get('user_id') %}
+          <a href="{{ url_for('profile') }}" class="btn-nav-login" style="border-color: var(--border-lime); color: var(--accent-lime);">
+            👤 {{ session.get('user_name', 'Profile') }}
+          </a>
+          <a href="{{ url_for('logout') }}" class="btn-nav-login" style="padding: 0.42rem 1rem;">Logout</a>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="btn-nav-login">Login</a>
+          <a href="{{ url_for('register') }}" class="btn-nav-register">Register</a>
+        {% endif %}
+
+        <button class="mobile-nav-toggle" aria-label="Open Navigation Menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Flash Messages / Toast Banner -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div style="position: fixed; top: 90px; right: 2rem; z-index: 999; display: flex; flex-direction: column; gap: 0.5rem;">
+        {% for category, message in messages %}
+          <div class="toast-notification show" style="transform: none; position: relative; bottom: auto; right: auto;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-lime); flex-shrink: 0;">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span style="font-size: 0.88rem; font-weight: 500;">{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- MAIN PAGE CONTENT -->
+  {% block content %}{% endblock %}
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <div class="brand-icon">
+              <svg viewBox="0 0 36 36" fill="none">
+                <path d="M4 8C4 6.89543 4.89543 6 6 6H16C17.1046 6 18 6.89543 18 8V28C18 29.1046 17.1046 30 16 30H6C4.89543 30 4 29.1046 4 28V8Z" stroke="currentColor" stroke-width="2.2"/>
+                <path d="M18 8C18 6.89543 18.8954 6 20 6H30C31.1046 6 32 6.89543 32 8V28C32 29.1046 31.1046 30 30 30H20C18.8954 30 18 29.1046 18 28V8Z" stroke="currentColor" stroke-width="2.2"/>
+              </svg>
+            </div>
+            <div class="brand-text">
+              <span class="brand-title">Community Knowledge Vault</span>
+              <span class="brand-tagline">Share • Learn • Preserve</span>
+            </div>
+          </div>
+          <p>
+            A community knowledge sharing platform for Amravati to document, learn, and preserve local skills and history.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('explore') }}">Explore Knowledge</a></li>
+            <li><a href="{{ url_for('share') }}">Share Knowledge</a></li>
+            <li><a href="{{ url_for('requests_page') }}">Learning Requests</a></li>
+          </ul>
+        </div>
+
+
+      <div class="footer-bottom">
+        <div>© 2026 Community Knowledge Vault (CKV). P R POTE College CEP Project.</div>
+        <div style="display: flex; gap: 1.5rem;">
+          <span>Flask + MySQL Architecture</span>
+          <span>•</span>
+          <span>Secure Hashed Passwords</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SEARCH MODAL OVERLAY -->
+  <div class="search-modal-overlay" id="searchModal">
+    <div class="search-modal-box">
+      <form action="{{ url_for('explore') }}" method="GET" class="search-modal-header">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-lime)" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" name="q" id="modalSearchInput" class="search-modal-input" placeholder="Search knowledge, skills, recipes, history..." autofocus>
+        <button type="button" id="closeSearchModal" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.5rem;">×</button>
+      </form>
+      <div style="margin-top: 1.25rem; font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between;">
+        <span>Press <kbd style="background: #1a1d24; padding: 2px 6px; border-radius: 4px; color: var(--accent-lime);">ENTER</kbd> to search or <kbd style="background: #1a1d24; padding: 2px 6px; border-radius: 4px; color: var(--accent-lime);">ESC</kbd> to exit</span>
+        <span>Search throughout all categories</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
